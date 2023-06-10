@@ -35,6 +35,9 @@ async function getWeather(cityName) {
 }
 
 async function getForecast(latitude, longitude) {
+const forecastContainer = document.querySelector("#forecast-container");
+forecastContainer.innerHTML = ""; // Clear the forecast container
+
   return fetch(
     `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=imperial`
   )
@@ -64,20 +67,32 @@ async function getForecast(latitude, longitude) {
           const tempIcon = sevenDayForecast[i].weather[0].icon;
           const humidity = sevenDayForecast[i].main.humidity;
           const windSpeed = sevenDayForecast[i].wind.speed;
-          console.log(
-            "Day",
-            loggedDates.length,
-            "Date:",
-            formattedDate,
-            "Temperature:",
-            temperature,
-            "Icon:",
-            tempIcon,
-            "Humidity:",
-            humidity + "%",
-            "Wind Speed:",
-            windSpeed + "mph"
-          );
+          // console.log(
+          //   "Day",
+          //   loggedDates.length,
+          //   "Date:",
+          //   formattedDate,
+          //   "Temperature:",
+          //   temperature,
+          //   "Icon:",
+          //   tempIcon,
+          //   "Humidity:",
+          //   humidity + "%",
+          //   "Wind Speed:",
+          //   windSpeed + "mph"
+          // );
+
+        
+          const forecastHTML = `
+<div>
+  <p>Date: ${formattedDate}</p>
+  <p>Temperature: ${temperature}</p>
+  <p><img src="https://openweathermap.org/img/w/${tempIcon}.png" alt="Weather Icon"></p>
+  <p>Humidity: ${humidity}%</p>
+  <p>Wind Speed: ${windSpeed}mph</p>
+</div>
+`;
+          forecastContainer.innerHTML += forecastHTML;
         }
       }
     })
@@ -98,6 +113,8 @@ searchForm.addEventListener("submit", function (event) {
       console.error(error);
     });
 });
+
+const forecastContainer = document.querySelector("#forecast-container");
 
 // Example usage
 // getWeather("Bakersfield")
