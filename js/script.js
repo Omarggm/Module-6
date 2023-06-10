@@ -47,14 +47,15 @@ async function getForecast(latitude, longitude) {
     })
     .then((data) => {
       const sevenDayForecast = data.list;
-      console.log("7-day forecast:", sevenDayForecast);
-      console.log("City:", data.city.name);
+      // console.log("7-day forecast:", sevenDayForecast);
+      const cityName = data.city.name;
+      console.log("City:", cityName);
 
       const loggedDates = [];
-      for (let i = 0; i < data.list.length ; i++) {
+      for (let i = 0; i < data.list.length; i++) {
         const date = new Date(sevenDayForecast[i].dt_txt);
         const formattedDate = date.toLocaleDateString();
-        
+
         // Check if the date has already been logged
         if (!loggedDates.includes(formattedDate)) {
           loggedDates.push(formattedDate);
@@ -86,14 +87,11 @@ async function getForecast(latitude, longitude) {
     });
 }
 
-
-
 searchForm.addEventListener("submit", function (event) {
   event.preventDefault();
   const cityName = cityInput.value;
   getWeather(cityName)
     .then((coordinates) => {
-      console.log("Received coordinates:", coordinates);
       getForecast(coordinates.latitude, coordinates.longitude);
     })
     .catch((error) => {
@@ -102,11 +100,10 @@ searchForm.addEventListener("submit", function (event) {
 });
 
 // Example usage
-getWeather("Bakersfield")
-  .then((coordinates) => {
-    console.log("Example coordinates:", coordinates);
-    return getForecast(coordinates.latitude, coordinates.longitude);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+// getWeather("Bakersfield")
+//   .then((coordinates) => {
+//     return getForecast(coordinates.latitude, coordinates.longitude);
+//   })
+//   .catch((error) => {
+//     console.error(error);
+//   });
