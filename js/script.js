@@ -4,7 +4,7 @@ const cityInput = document.querySelector("#city");
 
 async function getWeather(cityName) {
   return fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`
+    `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=imperial`
   )
     .then((response) => {
       if (response.ok) {
@@ -17,15 +17,15 @@ async function getWeather(cityName) {
       if (data.coord && data.coord.lat && data.coord.lon) {
         const latitude = data.coord.lat;
         const longitude = data.coord.lon;
-        console.log("Latitude:", latitude);
-        console.log("Longitude:", longitude);
+        // console.log("Latitude:", latitude);
+        // console.log("Longitude:", longitude);
         return { latitude, longitude };
       } else {
         throw new Error("Invalid API response");
       }
     })
     .then((coordinates) => {
-      console.log("Coordinates:", coordinates);
+      // console.log("Coordinates:", coordinates);
       return getForecast(coordinates.latitude, coordinates.longitude);
     })
     .catch((error) => {
@@ -36,7 +36,7 @@ async function getWeather(cityName) {
 
 async function getForecast(latitude, longitude) {
   return fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=imperial`
   )
     .then((response) => {
       if (response.ok) {
@@ -47,6 +47,11 @@ async function getForecast(latitude, longitude) {
     })
     .then((data) => {
       console.log("Forecast data:", data);
+      for(let i = 0; i < 7; i++) {
+       const temperature = data.list[i].main.temp;
+
+       console.log("Day", i + 1, "Temperature:", temperature + "°F");
+      }
     })
     .catch((error) => {
       console.error("Forecast API Error:", error);
