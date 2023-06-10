@@ -46,17 +46,38 @@ async function getForecast(latitude, longitude) {
       }
     })
     .then((data) => {
-      // console.log("Forecast data:", data);
-      const sevenDayForecast = data.list.slice(0, 7);
+      const sevenDayForecast = data.list;
       console.log("7-day forecast:", sevenDayForecast);
       console.log("City:", data.city.name);
 
-      for (let i = 0; i < sevenDayForecast.length; i++) {
-        const temperature = sevenDayForecast[i].main.temp;
-        const tempIcon = sevenDayForecast[i].weather[0].icon;
-        const humidity = sevenDayForecast[i].main.humidity;
-        const windSpeed = sevenDayForecast[i].wind.speed;
-        console.log("Day", i + 1, "Temperature:", temperature, "Icon:", tempIcon, "Humidity:", humidity + "%" , "Wind Speed:", windSpeed + "mph" );
+      const loggedDates = [];
+      for (let i = 0; i < data.list.length ; i++) {
+        const date = new Date(sevenDayForecast[i].dt_txt);
+        const formattedDate = date.toLocaleDateString();
+        
+        // Check if the date has already been logged
+        if (!loggedDates.includes(formattedDate)) {
+          loggedDates.push(formattedDate);
+
+          const temperature = sevenDayForecast[i].main.temp;
+          const tempIcon = sevenDayForecast[i].weather[0].icon;
+          const humidity = sevenDayForecast[i].main.humidity;
+          const windSpeed = sevenDayForecast[i].wind.speed;
+          console.log(
+            "Day",
+            loggedDates.length,
+            "Date:",
+            formattedDate,
+            "Temperature:",
+            temperature,
+            "Icon:",
+            tempIcon,
+            "Humidity:",
+            humidity + "%",
+            "Wind Speed:",
+            windSpeed + "mph"
+          );
+        }
       }
     })
     .catch((error) => {
@@ -64,6 +85,8 @@ async function getForecast(latitude, longitude) {
       throw error;
     });
 }
+
+
 
 searchForm.addEventListener("submit", function (event) {
   event.preventDefault();
