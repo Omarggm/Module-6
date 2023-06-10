@@ -46,11 +46,15 @@ async function getForecast(latitude, longitude) {
       }
     })
     .then((data) => {
-      console.log("Forecast data:", data);
-      for(let i = 0; i < 7; i++) {
-       const temperature = data.list[i].main.temp;
+      // console.log("Forecast data:", data);
+      const sevenDayForecast = data.list.slice(0, 7);
+      console.log("7-day forecast:", sevenDayForecast);
 
-       console.log("Day", i + 1, "Temperature:", temperature + "°F");
+      for (let i = 0; i < sevenDayForecast.length; i++) {
+        const temperature = sevenDayForecast[i].main.temp;
+        const humidity = sevenDayForecast[i].main.humidity;
+        
+        console.log("Day", i + 1, "Temperature:", temperature, "Humidity:", humidity + "%");
       }
     })
     .catch((error) => {
