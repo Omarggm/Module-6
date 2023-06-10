@@ -52,10 +52,11 @@ async function getForecast(latitude, longitude) {
 
       for (let i = 0; i < sevenDayForecast.length; i++) {
         const temperature = sevenDayForecast[i].main.temp;
+        const tempIcon = sevenDayForecast[i].weather[0].icon;
         const humidity = sevenDayForecast[i].main.humidity;
         const windSpeed = sevenDayForecast[i].wind.speed;
         
-        console.log("Day", i + 1, "Temperature:", temperature, "Humidity:", humidity + "%" , "Wind Speed:", windSpeed + "mph");
+        console.log("Day", i + 1, "Temperature:", temperature, "Icon:", tempIcon, "Humidity:", humidity + "%" , "Wind Speed:", windSpeed + "mph" );
       }
     })
     .catch((error) => {
