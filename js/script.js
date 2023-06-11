@@ -2,6 +2,7 @@ const apiKey = "45bf7d160c6f597ac794873819cece70";
 const searchForm = document.querySelector("#search-form");
 const cityInput = document.querySelector("#city");
 const searchHistory = document.querySelector("#search-history");
+const searchList = document.querySelector("#history-list");
 
 // Load search history from local storage
 let savedSearches = [];
@@ -18,7 +19,7 @@ function saveSearch(cityName) {
 
 // Function to display search history
 function displaySearchHistory() {
-  searchHistory.innerHTML = ""; // Clear search history container
+  searchList.innerHTML = ""; // Clear search history container
 
   const uniqueCities = [...new Set(savedSearches)].slice(-5).reverse();
 
@@ -30,7 +31,7 @@ function displaySearchHistory() {
       cityInput.value = cityName;
       searchForm.dispatchEvent(new Event("submit"));
     });
-    searchHistory.appendChild(searchItem);
+    searchList.appendChild(searchItem);
   });
 }
 
