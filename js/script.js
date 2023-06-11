@@ -20,28 +20,6 @@ function saveSearch(cityName) {
 function displaySearchHistory() {
   searchHistory.innerHTML = ""; // Clear search history container
 
-  const uniqueCities = [...new Set(savedSearches)];
-  const limitedSearches = uniqueCities.slice(-5).reverse();
-
-  limitedSearches.forEach((cityName) => {
-    const searchItem = document.createElement("div");
-    searchItem.textContent = cityName;
-    searchItem.classList.add("search-item");
-    searchItem.addEventListener("click", () => {
-      cityInput.value = cityName;
-      searchForm.dispatchEvent(new Event("submit"));
-    });
-    searchHistory.appendChild(searchItem);
-  });
-}
-
-// Call the function to display search history on page load
-displaySearchHistory();
-
-// Function to display search history
-function displaySearchHistory() {
-  searchHistory.innerHTML = ""; // Clear search history container
-
   const uniqueCities = [...new Set(savedSearches)].slice(-5).reverse();
 
   uniqueCities.forEach((cityName) => {
@@ -56,46 +34,64 @@ function displaySearchHistory() {
   });
 }
 
+// Call the function to display search history on page load
+displaySearchHistory();
+
 async function getWeather(cityName) {
   // Save the search to local storage
   saveSearch(cityName);
-  return fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=imperial`
-  )
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Error: " + response.status);
-      }
-    })
-    .then((data) => {
-      if (data.coord && data.coord.lat && data.coord.lon) {
-        const latitude = data.coord.lat;
-        const longitude = data.coord.lon;
-        // console.log("Latitude:", latitude);
-        // console.log("Longitude:", longitude);
-        return { latitude, longitude };
-      } else {
-        throw new Error("Invalid API response");
-      }
-    })
-    .then((coordinates) => {
-      // console.log("Coordinates:", coordinates);
-      return getForecast(coordinates.latitude, coordinates.longitude);
-    })
-    .then(() => {
-      // Update the search history display
-      displaySearchHistory();
-    })
-    .catch((error) => {
-      console.error("Weather API Error:", error);
-      throw error;
-    });
+
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=imperial`
+    );
+
+    if (!response.ok) {
+      throw new Error("Error: " + response.status);
+    }
+
+    const data = await response.json();
+
+    const temperature = data.main.temp;
+    const tempIcon = data.weather[0].icon;
+    const humidity = data.main.humidity;
+    const windSpeed = data.wind.speed;
+    const currentDate = new Date().toLocaleDateString();
+
+    const currentWeatherHTML = `
+      <div>
+        <p>Date: ${currentDate}</p>
+        <p>Temperature: ${temperature}</p>
+        <p><img src="https://openweathermap.org/img/w/${tempIcon}.png" alt="Weather Icon"></p>
+        <p>Humidity: ${humidity}%</p>
+        <p>Wind Speed: ${windSpeed}mph</p>
+      </div>
+    `;
+
+    todayContainer.innerHTML = currentWeatherHTML;
+
+    if (data.coord && data.coord.lat && data.coord.lon) {
+      const latitude = data.coord.lat;
+      const longitude = data.coord.lon;
+      return { latitude, longitude };
+    } else {
+      throw new Error("Invalid API response");
+    }
+
+    forecastContainer.innerHTML = ""; // Clear the forecast container before fetching forecast
+
+    const coordinates = await getForecast(coordinates.latitude, coordinates.longitude);
+
+    // Update the search history display
+    displaySearchHistory();
+
+  } catch (error) {
+    console.error("Weather API Error:", error);
+    throw error;
+  }
 }
 
 async function getForecast(latitude, longitude) {
-  const forecastContainer = document.querySelector("#forecast-container");
   forecastContainer.innerHTML = ""; // Clear the forecast container
 
   return fetch(
@@ -110,9 +106,9 @@ async function getForecast(latitude, longitude) {
     })
     .then((data) => {
       const sevenDayForecast = data.list;
-      // console.log("7-day forecast:", sevenDayForecast);
+      //console.log("7-day forecast:", sevenDayForecast);
       const cityName = data.city.name;
-      console.log("City:", cityName);
+      //console.log("City:", cityName);
 
       const loggedDates = [];
       for (let i = 0; i < data.list.length; i++) {
@@ -128,8 +124,6 @@ async function getForecast(latitude, longitude) {
           const humidity = sevenDayForecast[i].main.humidity;
           const windSpeed = sevenDayForecast[i].wind.speed;
           console.log(
-            "Day",
-            loggedDates.length,
             "Date:",
             formattedDate,
             "Temperature:",
@@ -174,12 +168,4 @@ searchForm.addEventListener("submit", function (event) {
 });
 
 const forecastContainer = document.querySelector("#forecast-container");
-
-// Example usage
-// getWeather("Bakersfield")
-//   .then((coordinates) => {
-//     return getForecast(coordinates.latitude, coordinates.longitude);
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
+const todayContainer = document.querySelector("#today-container");
