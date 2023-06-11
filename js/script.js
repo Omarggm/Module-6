@@ -20,10 +20,17 @@ function saveSearch(cityName) {
 function displaySearchHistory() {
   searchHistory.innerHTML = ""; // Clear search history container
 
-  savedSearches.forEach((cityName) => {
+  const uniqueCities = [...new Set(savedSearches)];
+  const limitedSearches = uniqueCities.slice(-5).reverse();
+
+  limitedSearches.forEach((cityName) => {
     const searchItem = document.createElement("div");
     searchItem.textContent = cityName;
     searchItem.classList.add("search-item");
+    searchItem.addEventListener("click", () => {
+      cityInput.value = cityName;
+      searchForm.dispatchEvent(new Event("submit"));
+    });
     searchHistory.appendChild(searchItem);
   });
 }
@@ -48,7 +55,6 @@ function displaySearchHistory() {
     searchHistory.appendChild(searchItem);
   });
 }
-
 
 async function getWeather(cityName) {
   // Save the search to local storage
@@ -77,6 +83,10 @@ async function getWeather(cityName) {
     .then((coordinates) => {
       // console.log("Coordinates:", coordinates);
       return getForecast(coordinates.latitude, coordinates.longitude);
+    })
+    .then(() => {
+      // Update the search history display
+      displaySearchHistory();
     })
     .catch((error) => {
       console.error("Weather API Error:", error);
