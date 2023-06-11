@@ -1,11 +1,13 @@
 h1 {
     text-align: center;
+    width: auto;
 }
 
 #search-form {
     display: flex;
     justify-content: center;
     margin: 20px;
+    width: auto;
 }
 
 #search-history, #today-container, #forecast-container {
@@ -14,16 +16,17 @@ h1 {
 }
 
 #search-history {
-    width: 22%;
+    width: 15%;
     float: left;
     margin-right: 1%;
   }
   
   #today-container,
-  #forecast-container {
-    width: 75%;
+  #forecast-container,
+  #city-name {
+    width: 70%;
     float: right;
-    margin-left: 1%;
+    padding: 1%;
   }
   
   #today-container p {
