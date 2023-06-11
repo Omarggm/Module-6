@@ -41,11 +41,13 @@ function displaySearchHistory() {
     const searchItem = document.createElement("div");
     searchItem.textContent = cityName;
     searchItem.classList.add("search-item");
+    searchItem.addEventListener("click", () => {
+      cityInput.value = cityName;
+      searchForm.dispatchEvent(new Event("submit"));
+    });
     searchHistory.appendChild(searchItem);
   });
 }
-
-
 
 
 async function getWeather(cityName) {
