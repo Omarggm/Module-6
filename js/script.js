@@ -1,8 +1,40 @@
 const apiKey = "45bf7d160c6f597ac794873819cece70";
 const searchForm = document.querySelector("#search-form");
 const cityInput = document.querySelector("#city");
+const searchHistory = document.querySelector("#search-history");
+
+// Load search history from local storage
+let savedSearches = [];
+
+if (localStorage.getItem("searches")) {
+  savedSearches = JSON.parse(localStorage.getItem("searches"));
+}
+
+// Function to save a search to the local storage
+function saveSearch(cityName) {
+  savedSearches.push(cityName);
+  localStorage.setItem("searches", JSON.stringify(savedSearches));
+}
+
+// Function to display search history
+function displaySearchHistory() {
+  searchHistory.innerHTML = ""; // Clear search history container
+
+  savedSearches.forEach((cityName) => {
+    const searchItem = document.createElement("div");
+    searchItem.textContent = cityName;
+    searchItem.classList.add("search-item");
+    searchHistory.appendChild(searchItem);
+  });
+}
+
+// Call the function to display search history on page load
+displaySearchHistory();
+
 
 async function getWeather(cityName) {
+    // Save the search to local storage
+    saveSearch(cityName);
   return fetch(
     `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=imperial`
   )
@@ -35,8 +67,8 @@ async function getWeather(cityName) {
 }
 
 async function getForecast(latitude, longitude) {
-const forecastContainer = document.querySelector("#forecast-container");
-forecastContainer.innerHTML = ""; // Clear the forecast container
+  const forecastContainer = document.querySelector("#forecast-container");
+  forecastContainer.innerHTML = ""; // Clear the forecast container
 
   return fetch(
     `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=imperial`
@@ -67,31 +99,30 @@ forecastContainer.innerHTML = ""; // Clear the forecast container
           const tempIcon = sevenDayForecast[i].weather[0].icon;
           const humidity = sevenDayForecast[i].main.humidity;
           const windSpeed = sevenDayForecast[i].wind.speed;
-          // console.log(
-          //   "Day",
-          //   loggedDates.length,
-          //   "Date:",
-          //   formattedDate,
-          //   "Temperature:",
-          //   temperature,
-          //   "Icon:",
-          //   tempIcon,
-          //   "Humidity:",
-          //   humidity + "%",
-          //   "Wind Speed:",
-          //   windSpeed + "mph"
-          // );
+          console.log(
+            "Day",
+            loggedDates.length,
+            "Date:",
+            formattedDate,
+            "Temperature:",
+            temperature,
+            "Icon:",
+            tempIcon,
+            "Humidity:",
+            humidity + "%",
+            "Wind Speed:",
+            windSpeed + "mph"
+          );
 
-        
           const forecastHTML = `
-<div>
-  <p>Date: ${formattedDate}</p>
-  <p>Temperature: ${temperature}</p>
-  <p><img src="https://openweathermap.org/img/w/${tempIcon}.png" alt="Weather Icon"></p>
-  <p>Humidity: ${humidity}%</p>
-  <p>Wind Speed: ${windSpeed}mph</p>
-</div>
-`;
+          <div>
+          <p>Date: ${formattedDate}</p>
+          <p>Temperature: ${temperature}</p>
+          <p><img src="https://openweathermap.org/img/w/${tempIcon}.png" alt="Weather Icon"></p>
+          <p>Humidity: ${humidity}%</p>
+          <p>Wind Speed: ${windSpeed}mph</p>
+          </div>
+          `;
           forecastContainer.innerHTML += forecastHTML;
         }
       }
