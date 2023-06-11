@@ -1,8 +1,64 @@
 const apiKey = "45bf7d160c6f597ac794873819cece70";
 const searchForm = document.querySelector("#search-form");
 const cityInput = document.querySelector("#city");
+const searchHistory = document.querySelector("#search-history");
+
+// Load search history from local storage
+let savedSearches = [];
+
+if (localStorage.getItem("searches")) {
+  savedSearches = JSON.parse(localStorage.getItem("searches"));
+}
+
+// Function to save a search to the local storage
+function saveSearch(cityName) {
+  savedSearches.push(cityName);
+  localStorage.setItem("searches", JSON.stringify(savedSearches));
+}
+
+// Function to display search history
+function displaySearchHistory() {
+  searchHistory.innerHTML = ""; // Clear search history container
+
+  const uniqueCities = [...new Set(savedSearches)];
+  const limitedSearches = uniqueCities.slice(-5).reverse();
+
+  limitedSearches.forEach((cityName) => {
+    const searchItem = document.createElement("div");
+    searchItem.textContent = cityName;
+    searchItem.classList.add("search-item");
+    searchItem.addEventListener("click", () => {
+      cityInput.value = cityName;
+      searchForm.dispatchEvent(new Event("submit"));
+    });
+    searchHistory.appendChild(searchItem);
+  });
+}
+
+// Call the function to display search history on page load
+displaySearchHistory();
+
+// Function to display search history
+function displaySearchHistory() {
+  searchHistory.innerHTML = ""; // Clear search history container
+
+  const uniqueCities = [...new Set(savedSearches)].slice(-5).reverse();
+
+  uniqueCities.forEach((cityName) => {
+    const searchItem = document.createElement("div");
+    searchItem.textContent = cityName;
+    searchItem.classList.add("search-item");
+    searchItem.addEventListener("click", () => {
+      cityInput.value = cityName;
+      searchForm.dispatchEvent(new Event("submit"));
+    });
+    searchHistory.appendChild(searchItem);
+  });
+}
 
 async function getWeather(cityName) {
+  // Save the search to local storage
+  saveSearch(cityName);
   return fetch(
     `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=imperial`
   )
@@ -28,6 +84,10 @@ async function getWeather(cityName) {
       // console.log("Coordinates:", coordinates);
       return getForecast(coordinates.latitude, coordinates.longitude);
     })
+    .then(() => {
+      // Update the search history display
+      displaySearchHistory();
+    })
     .catch((error) => {
       console.error("Weather API Error:", error);
       throw error;
@@ -35,6 +95,9 @@ async function getWeather(cityName) {
 }
 
 async function getForecast(latitude, longitude) {
+  const forecastContainer = document.querySelector("#forecast-container");
+  forecastContainer.innerHTML = ""; // Clear the forecast container
+
   return fetch(
     `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=imperial`
   )
@@ -78,6 +141,17 @@ async function getForecast(latitude, longitude) {
             "Wind Speed:",
             windSpeed + "mph"
           );
+
+          const forecastHTML = `
+          <div>
+          <p>Date: ${formattedDate}</p>
+          <p>Temperature: ${temperature}</p>
+          <p><img src="https://openweathermap.org/img/w/${tempIcon}.png" alt="Weather Icon"></p>
+          <p>Humidity: ${humidity}%</p>
+          <p>Wind Speed: ${windSpeed}mph</p>
+          </div>
+          `;
+          forecastContainer.innerHTML += forecastHTML;
         }
       }
     })
@@ -98,6 +172,8 @@ searchForm.addEventListener("submit", function (event) {
       console.error(error);
     });
 });
+
+const forecastContainer = document.querySelector("#forecast-container");
 
 // Example usage
 // getWeather("Bakersfield")
