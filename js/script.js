@@ -58,6 +58,10 @@ async function getWeather(cityName) {
     const humidity = data.main.humidity;
     const windSpeed = data.wind.speed;
     const currentDate = new Date().toLocaleDateString();
+    const cityNameElement = document.querySelector("#city-name"); // Get the city name element
+
+    // Update the city name
+    cityNameElement.textContent = data.name;
 
     const currentWeatherHTML = `
       <div>
@@ -91,6 +95,7 @@ async function getWeather(cityName) {
     throw error;
   }
 }
+
 
 async function getForecast(latitude, longitude) {
   forecastContainer.innerHTML = ""; // Clear the forecast container
