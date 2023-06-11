@@ -1,5 +1,4 @@
-# fuzzy-palm-tree
-Module 6 Weather App
+**Module 6 Weather App**
 
 # Weather App README
 This is a weather application that retrieves current weather and 7-day forecast data from the OpenWeatherMap API based on user input. The application is implemented using JavaScript and interacts with the HTML document to display the weather information.
