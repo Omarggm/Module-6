@@ -1,0 +1,43 @@
+h1 {
+    text-align: center;
+}
+
+#search-form {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+#search-history, #today-container, #forecast-container {
+    border: 1px solid black;
+
+}
+
+#search-history {
+    width: 22%;
+    float: left;
+    margin-right: 1%;
+  }
+  
+  #today-container,
+  #forecast-container {
+    width: 75%;
+    float: right;
+    margin-left: 1%;
+  }
+  
+  #today-container p {
+    flex: 1;
+    margin: 1%;
+  }
+
+  #forecast-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  #forecast-container p {
+    flex: 1;
+    margin: 1%;
+  }
+  
