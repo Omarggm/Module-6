@@ -31,10 +31,26 @@ function displaySearchHistory() {
 // Call the function to display search history on page load
 displaySearchHistory();
 
+// Function to display search history
+function displaySearchHistory() {
+  searchHistory.innerHTML = ""; // Clear search history container
+
+  const uniqueCities = [...new Set(savedSearches)].slice(-5).reverse();
+
+  uniqueCities.forEach((cityName) => {
+    const searchItem = document.createElement("div");
+    searchItem.textContent = cityName;
+    searchItem.classList.add("search-item");
+    searchHistory.appendChild(searchItem);
+  });
+}
+
+
+
 
 async function getWeather(cityName) {
-    // Save the search to local storage
-    saveSearch(cityName);
+  // Save the search to local storage
+  saveSearch(cityName);
   return fetch(
     `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=imperial`
   )
